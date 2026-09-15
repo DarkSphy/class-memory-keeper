@@ -14,7 +14,187 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      classes: {
+        Row: {
+          created_at: string
+          grade: string
+          id: string
+          last_accessed_at: string
+          name: string
+          notes: string | null
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          grade: string
+          id?: string
+          last_accessed_at?: string
+          name: string
+          notes?: string | null
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          grade?: string
+          id?: string
+          last_accessed_at?: string
+          name?: string
+          notes?: string | null
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lesson_record_students: {
+        Row: {
+          created_at: string
+          lesson_record_id: string
+          student_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          lesson_record_id: string
+          student_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          lesson_record_id?: string
+          student_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_record_students_lesson_record_id_fkey"
+            columns: ["lesson_record_id"]
+            isOneToOne: false
+            referencedRelation: "lesson_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lesson_record_students_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_records: {
+        Row: {
+          class_id: string
+          content: string
+          created_at: string
+          id: string
+          lesson_date: string
+          notes: string
+          pending: string | null
+          perception: Database["public"]["Enums"]["class_perception"]
+          status: Database["public"]["Enums"]["lesson_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          class_id: string
+          content: string
+          created_at?: string
+          id?: string
+          lesson_date?: string
+          notes: string
+          pending?: string | null
+          perception: Database["public"]["Enums"]["class_perception"]
+          status: Database["public"]["Enums"]["lesson_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          class_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          lesson_date?: string
+          notes?: string
+          pending?: string | null
+          perception?: Database["public"]["Enums"]["class_perception"]
+          status?: Database["public"]["Enums"]["lesson_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_records_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      students: {
+        Row: {
+          class_id: string
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +203,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      class_perception: "good" | "average" | "difficult"
+      lesson_status: "completed" | "partial" | "not_completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +331,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      class_perception: ["good", "average", "difficult"],
+      lesson_status: ["completed", "partial", "not_completed"],
+    },
   },
 } as const
