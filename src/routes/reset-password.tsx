@@ -1,0 +1,11 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState, type FormEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/page-ui";
+import { supabase } from "@/integrations/supabase/client";
+export const Route = createFileRoute("/reset-password")({ head: () => ({ meta: [{ title: "Nova senha — Simbi" }, { name: "description", content: "Defina uma nova senha para sua conta Simbi." }, { property: "og:title", content: "Nova senha — Simbi" }, { property: "og:description", content: "Recupere o acesso à sua conta." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), component: ResetPage });
+function ResetPage() { const navigate = useNavigate(); const [password, setPassword] = useState(""); const [ready, setReady] = useState(false); const [message, setMessage] = useState("");
+  useEffect(() => { const recovery = window.location.hash.includes("type=recovery") || new URLSearchParams(window.location.search).get("type") === "recovery"; void supabase.auth.getSession().then(({ data }) => setReady(recovery || Boolean(data.session))); }, []);
+  async function submit(e: FormEvent) { e.preventDefault(); const { error } = await supabase.auth.updateUser({ password }); if (error) { setMessage(error.message); return; } await navigate({ to: "/today", replace: true }); }
+  return <main className="grid min-h-screen place-items-center px-6"><form onSubmit={submit} className="w-full max-w-sm"><p className="text-sm font-bold text-primary">Simbi</p><h1 className="mt-2 font-display text-4xl font-bold">Crie uma nova senha</h1><p className="mt-3 text-sm text-muted-foreground">Escolha uma senha segura para voltar à sua memória pedagógica.</p><div className="mt-8 grid gap-5">{ready ? <Field label="Nova senha"><Input required minLength={6} type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></Field> : <p className="text-sm text-destructive">Este link não é válido ou expirou.</p>}{message && <p className="text-sm text-destructive">{message}</p>}<Button size="lg" disabled={!ready}>Salvar nova senha</Button></div></form></main>; }
